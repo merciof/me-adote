@@ -4,9 +4,13 @@ import Result from "./Result";
 
 const ANIMALS = ["bird", "cat", "dog", "rabbit", "reptile"];
 
+const localCache = {};
+
 // TODO criar cache locar para as raças
+
+// POr que as raças de vários animais estão se acumulando no campo dselect?
 function SearchParams() {
-  const [animal, setAnimal] = useState("dog");
+  const [animal, setAnimal] = useState("");
   const [pets, setPets] = useState([]);
   const [breeds, setBreeds] = useState([]);
 
@@ -18,15 +22,22 @@ function SearchParams() {
       });
   };
 
-  useEffect(requestAnimals, []);
+  // useEffect(requestAnimals, []);
 
   useEffect(
     function () {
-      axios
-        .get(`https://pets-v2.dev-apis.com/breeds?animal=${animal}`)
-        .then(function (response) {
-          setBreeds(response.data.breeds);
-        });
+      if (animal.length === 0) {
+        setBreeds([]);
+      } else if (localCache[animal]) {
+        setBreeds(localCache[animal]);
+      } else {
+        axios
+          .get(`https://pets-v2.dev-apis.com/breeds?animal=${animal}`)
+          .then(function (response) {
+            setBreeds(response.data.breeds);
+            localCache[animal] = response.data.breeds;
+          });
+      }
     },
     [animal]
   );
@@ -56,12 +67,11 @@ function SearchParams() {
             setAnimal(event.target.value);
           }}
         >
-          <option value=""></option>
+          <option></option>
           {ANIMALS.map(function (animal) {
             return (
               <option value={animal} key={animal}>
-                {" "}
-                {animal}{" "}
+                {animal}
               </option>
             );
           })}
@@ -69,13 +79,12 @@ function SearchParams() {
 
         <br />
         <select>
-          <option value=""></option>
+          <option></option>
           {breeds.length
             ? breeds.map(function (breed) {
                 return (
-                  <option value="" key={animal}>
-                    {" "}
-                    {breed}{" "}
+                  <option value={breed} key={breed}>
+                    {breed}
                   </option>
                 );
               })
