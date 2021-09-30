@@ -5,8 +5,6 @@ import Result from "./Result";
 
 const ANIMALS = ["bird", "cat", "dog", "rabbit", "reptile"];
 
-const localCache = {};
-
 // TODO criar cache local para as raças
 // TODO criar cahce local dentro de Contexto
 
