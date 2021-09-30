@@ -1,18 +1,21 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import cacheContext from "./cacheContext";
 import Result from "./Result";
 
 const ANIMALS = ["bird", "cat", "dog", "rabbit", "reptile"];
 
 const localCache = {};
 
-// TODO criar cache locar para as raças
+// TODO criar cache local para as raças
+// TODO criar cahce local dentro de Contexto
 
 // POr que as raças de vários animais estão se acumulando no campo dselect?
 function SearchParams() {
   const [animal, setAnimal] = useState("");
   const [pets, setPets] = useState([]);
   const [breeds, setBreeds] = useState([]);
+  const [cache, setCache] = useContext(cacheContext);
 
   const requestAnimals = function () {
     axios
@@ -28,14 +31,14 @@ function SearchParams() {
     function () {
       if (animal.length === 0) {
         setBreeds([]);
-      } else if (localCache[animal]) {
-        setBreeds(localCache[animal]);
+      } else if (cache[animal]) {
+        setBreeds(cache[animal]);
       } else {
         axios
           .get(`https://pets-v2.dev-apis.com/breeds?animal=${animal}`)
           .then(function (response) {
             setBreeds(response.data.breeds);
-            localCache[animal] = response.data.breeds;
+            setCache({ ...cache, [animal]: response.data.breeds });
           });
       }
     },

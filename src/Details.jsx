@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function Details({ match }) {
   const [pet, setPet] = useState({});
@@ -20,6 +21,10 @@ function Details({ match }) {
       <h2>{`${animal} — ${breed} — ${city}, ${state}`}</h2>
 
       <button>Adopt {name}</button>
+
+      <Link to={"/search"}>
+        <button>Voltar</button>
+      </Link>
 
       <p>{description}</p>
     </>
